@@ -4,11 +4,13 @@ Please email me for bugs/suggestions!
 
 ## Usage
 ```
+var esso = require('eve-sso-simple');
+
 router.get('/', (req, res) => {
     
     async function login(req, res) {
 
-        var tokens = await loginService.login(  
+        var tokens = await esso.login(  
             // Tokens (JWT) encoded using 'token_secret,' then saved as cookies.
             // Redirects to SSO login page if not logged in.
             {
