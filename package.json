@@ -1,0 +1,31 @@
+{
+  "name": "eve-sso-simple",
+  "version": "1.0.0",
+  "description": "Simple promise-based node.js module simplifying EVE Online's SSO authentication flow.",
+  "main": "eve-sso-simple.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esoodev/eve-sso-simple.git"
+  },
+  "keywords": [
+    "eve",
+    "eve-online",
+    "sso",
+    "esi",
+    "eve-swagger-interface"
+  ],
+  "author": "esoodev@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esoodev/eve-sso-simple/issues"
+  },
+  "homepage": "https://github.com/esoodev/eve-sso-simple#readme",
+  "dependencies": {
+    "jwt-simple": "^0.5.1",
+    "querystring": "^0.2.0",
+    "request": "^2.81.0"
+  }
+}
