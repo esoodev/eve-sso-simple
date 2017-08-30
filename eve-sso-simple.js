@@ -1,11 +1,28 @@
 ﻿var qs = require('querystring');
 var request = require('request');
-var jwt = require('jwt-simple');
 
 module.exports = {
 
-    // Send a request to ESI
-    login: function (setup, req, res) {
+    /**
+     * Redirects to EVE SSO login page.
+     */
+    login: function (setup, res) {
+        var query = qs.stringify(
+                    {
+                        response_type: "code",
+                        redirect_uri: setup.redirect_uri,
+                        client_id: setup.client_id,
+                        scope: setup.scope
+                    }
+                );
+
+                res.redirect('https://login.eveonline.com/oauth/authorize/?' + query);
+    },
+
+    /**
+     * Consumes access code and fetches access and character tokens.
+     */
+    getTokens: function (setup, req, res, callback) {
 
         return new Promise((resolve, reject) => {
 
@@ -32,7 +49,6 @@ module.exports = {
                         if (tokenRes && (tokenRes.statusCode === 200 || tokenRes.statusCode === 201)) {
 
                             accessToken = JSON.parse(tokenBody);
-                            res.cookie('access_token', jwt.encode(accessToken, setup.token_secret));
 
                             request(
                                 {
@@ -46,9 +62,10 @@ module.exports = {
                                 }, function (charErr, charRes, charBody) {
 
                                     if (charRes && (charRes.statusCode === 200 || charRes.statusCode === 201)) {
-                                        
+
                                         charToken = JSON.parse(charBody);
-                                        res.cookie('character_token', jwt.encode(charToken, setup.token_secret));
+
+                                        if (callback != null) callback(accessToken, charToken);
 
                                     }
 
@@ -60,28 +77,14 @@ module.exports = {
                         }
                     });
             } else if (req.cookies.access_token != null || req.cookies.character_token != null) {
+
+                if (callback != null) callback(accessToken, charToken);
+
                 resolve({
-                    access_token: jwt.decode(req.cookies.access_token, setup.token_secret),
-                    character_token: jwt.decode(req.cookies.character_token, setup.token_secret)
+                    access_token: req.cookies.access_token,
+                    character_token: req.cookies.character_token
                 });
-            } else {
-
-                var query = qs.stringify(
-                    {
-                        response_type: "code",
-                        redirect_uri: setup.redirect_uri,
-                        client_id: setup.client_id,
-                        scope: setup.scope
-                    }
-                );
-
-                res.redirect('https://login.eveonline.com/oauth/authorize/?' + query);
             }
-
-
         });
-
-
     }
-
 }
